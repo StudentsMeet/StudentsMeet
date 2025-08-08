@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Students Meet</title>
+
+  <style>
+    /* ---------- Variables ---------- */
+    :root{
+      --bg-1: #061025;
+      --bg-2: #071827;
+      --card: rgba(12,18,28,0.85);
+      --glass: rgba(255,255,255,0.03);
+      --accent-a: #00d4c3;
+      --accent-b: #0ea5ff;
+      --muted: #9aa6b2;
+      --radius: 14px;
+      --container-w:1100px;
+    }
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(1200px 500px at 10% 10%, rgba(14,165,164,0.06), transparent),
+                  linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      color:#e6eef6;display:flex;align-items:flex-start;justify-content:center;padding:28px;
+    }
+
+    /* ---------- App wrapper ---------- */
+    .wrap{width:100%;max-width:var(--container-w);}
+
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:62px;height:62px;border-radius:16px;
+      background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:#042027;font-size:22px;box-shadow:0 14px 30px rgba(2,6,23,.6);
+    }
+    h1{font-size:20px;margin:0}
+    p.sub{margin:0;color:var(--muted);font-size:13px}
+
+    /* ---------- Grid ---------- */
+    .container{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+    @media (max-width:980px){ .container{grid-template-columns:1fr} .aside{order:2} }
+
+    /* ---------- Cards ---------- */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
+      border-radius:var(--radius);padding:16px;box-shadow:0 10px 30px rgba(2,6,23,.6);
+    }
+
+    /* ---------- Composer ---------- */
+    .composer{display:flex;gap:14px;align-items:flex-start}
+    .avatar-placeholder{
+      width:64px;height:64px;border-radius:12px;background:var(--glass);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--muted);font-size:20px;
+      flex-shrink:0;box-shadow: inset 0 -6px 18px rgba(0,0,0,0.25);
+    }
+    form{flex:1}
+    .row{display:flex;gap:10px;margin-bottom:10px}
+    input[type="text"], select, textarea{
+      width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit;
+      font-size:14px;outline:none;resize:none;
+    }
+    textarea{min-height:96px}
+    .composer-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:12px}
+    .btn{
+      background:linear-gradient(90deg,var(--accent-a),var(--accent-b));border:none;padding:10px 14px;border-radius:12px;color:#042027;font-weight:800;cursor:pointer;
+      box-shadow:0 10px 30px rgba(14,165,164,0.08);
+    }
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);font-weight:600}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .meta-row{display:flex;gap:8px;align-items:center}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* ---------- Feed & post ---------- */
+    .feed{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+    .post{
+      display:flex;gap:12px;padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.02);align-items:flex-start;animation:fadeIn .18s ease-out;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .post .meta{display:flex;align-items:center;gap:8px}
+    .name{font-weight:800}
+    .year-badge{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:12px;color:var(--muted)}
+    .time{font-size:12px;color:var(--muted)}
+    .post-content{margin-top:6px;white-space:pre-wrap;color:#dfeaf2}
+
+    .post-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .like{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.02);cursor:pointer;color:var(--muted);font-weight:700}
+    .like svg{width:18px;height:18px}
+    .like.active{background:linear-gradient(90deg, rgba(0,212,195,0.06), rgba(14,165,164,0.06));color:var(--accent-a);border-color:rgba(0,212,195,0.12)}
+    .like .count{min-width:22px;text-align:center}
+
+    /* ---------- Aside ---------- */
+    .aside .card + .card{margin-top:12px}
+    .filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .filter-row select{min-width:160px;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03)}
+    .clear{background:transparent;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:10px;color:var(--muted);cursor:pointer}
+
+    /* ---------- Footer ---------- */
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* ---------- Responsive small tweaks ---------- */
+    @media (max-width:480px){
+      .logo{width:48px;height:48px;font-size:18px}
+      .avatar-placeholder{width:48px;height:48px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">CF</div>
+        <div>
+          <h1>StudentsMeet</h1>
+          <p class="sub">Student posts • Share status by year</p>
+        </div>
+      </div>
+      <div class="small">Students Meet • Realtime</div>
+    </header>
+
+    <div class="container">
+      <!-- main -->
+      <main>
+        <div class="card">
+          <div class="composer">
+            <div class="avatar-placeholder" id="composerAvatar">S</div>
+            <form id="postForm" autocomplete="off">
+              <div class="row">
+                <input id="firstName" type="text" placeholder="First name (e.g., John)" maxlength="30" />
+                <select id="yearSelect">
+                  <option value="">Select year</option>
+                  <option value="1st year">1st year</option>
+                  <option value="2nd year">2nd year</option>
+                  <option value="3rd year">3rd year</option>
+                  <option value="4th year">4th year</option>
+                </select>
+              </div>
+              <textarea id="postText" maxlength="280" placeholder="What's happening? (max 280 chars)"></textarea>
+
+              <div class="composer-footer">
+                <div class="meta-row">
+                  <div class="small"><span id="charsLeft">280</span> characters left</div>
+                  <div class="small" style="margin-left:8px">Tip: Press <strong>Ctrl/Cmd + Enter</strong> to post</div>
+                </div>
+                <div>
+                  <button id="postBtn" class="btn" type="submit">Post</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="feed" id="feed"></div>
+        </div>
+      </main>
+
+      <!-- aside -->
+      <aside class="aside">
+        <div class="card">
+          <h3 style="margin:0 0 8px 0">Filter feed</h3>
+          <div class="filter-row">
+            <select id="filterYear">
+              <option value="all">All years</option>
+              <option value="1st year">1st year</option>
+              <option value="2nd year">2nd year</option>
+              <option value="3rd year">3rd year</option>
+              <option value="4th year">4th year</option>
+            </select>
+            <button id="clearBtn" class="clear">Clear all posts</button>
+          </div>
+          <p class="small" style="margin-top:10px">Posts saved to Firestore — visible to everyone using this app.</p>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin:0 0 8px 0">About</h3>
+          <p class="small">StudentsMeet is a vibrant online space created for our college community — a place where students from 1st year to 4th year can share their thoughts, moments, and ideas. Whether it’s about campus events, study tips, or just the fun of daily student life, StudentsMeet connects us all. Post updates, interact with classmates, and celebrate the journey of college together!</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+            <div class="small">Saved posts: <strong id="countSaved">0</strong></div>
+            <div><button id="refreshBtn" class="btn secondary">Refresh</button></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Made with ❤️ • CampusFeed — Advanced UI
+    </footer>
+  </div>
+
+  <!-- Firebase SDK (modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, onSnapshot, query, orderBy, updateDoc, doc, increment, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+    // ---------- FIREBASE CONFIG ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyAav-jNk7sxCXc5FRPq6-0a3HT2Us2OpMI",
+      authDomain: "studentsmeet-73d0b.firebaseapp.com",
+      projectId: "studentsmeet-73d0b",
+      storageBucket: "studentsmeet-73d0b.firebasestorage.app",
+      messagingSenderId: "310359993664",
+      appId: "1:310359993664:web:286d11f77120a060615ea5",
+      measurementId: "G-LKZN8FQWPE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ---------- UI elements ----------
+    const postForm = document.getElementById('postForm');
+    const firstNameInput = document.getElementById('firstName');
+    const yearInput = document.getElementById('yearSelect');
+    const postText = document.getElementById('postText');
+    const postBtn = document.getElementById('postBtn');
+    const feed = document.getElementById('feed');
+    const charsLeft = document.getElementById('charsLeft');
+    const composerAvatar = document.getElementById('composerAvatar');
+    const filterYear = document.getElementById('filterYear');
+    const clearBtn = document.getElementById('clearBtn');
+    const countSaved = document.getElementById('countSaved');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // ---------- Helpers ----------
+    function timeAgo(ts){
+      if (!ts) return 'just now';
+      const now = Date.now();
+      const diff = Math.floor((now - ts) / 1000);
+      if (diff < 10) return 'just now';
+      if (diff < 60) return diff + 's';
+      if (diff < 3600) return Math.floor(diff/60) + 'm';
+      if (diff < 86400) return Math.floor(diff/3600) + 'h';
+      const d = new Date(ts);
+      return d.toLocaleString();
+    }
+
+    // ---------- Firestore: realtime listener ----------
+    const postsCol = collection(db, "posts");
+    const q = query(postsCol, orderBy("time", "desc"));
+
+    let latestSnapshot = null;
+    onSnapshot(q, snapshot => {
+      latestSnapshot = snapshot;
+      const posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFeed(posts);
+      countSaved.textContent = posts.length;
+    }, err => {
+      console.error('Firestore listen error', err);
+    });
+
+    // ---------- Render feed ----------
+    function renderFeed(posts){
+      feed.innerHTML = '';
+      const filter = filterYear.value;
+      const filtered = posts.filter(p => filter === 'all' ? true : p.year === filter);
+      if (filtered.length === 0){
+        const el = document.createElement('div');
+        el.className = 'small';
+        el.style.padding = '14px';
+        el.textContent = 'No posts yet.';
+        feed.appendChild(el);
+        return;
+      }
+
+      filtered.forEach(post => {
+        const node = createPostElement(post);
+        feed.appendChild(node);
+      });
+    }
+
+    // ---------- Create post DOM ----------
+    function createPostElement(post){
+      const wrap = document.createElement('div');
+      wrap.className = 'post';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar-placeholder';
+      avatar.style.width = '56px';
+      avatar.style.height = '56px';
+      avatar.style.borderRadius = '10px';
+      avatar.textContent = (post.firstName || 'S').charAt(0).toUpperCase();
+
+      const body = document.createElement('div');
+      body.style.flex = '1';
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'name';
+      nameEl.textContent = post.firstName || 'Student';
+
+      const yearBadge = document.createElement('div');
+      yearBadge.className = 'year-badge';
+      yearBadge.textContent = post.year || '';
+
+      const timeEl = document.createElement('div');
+      timeEl.className = 'time';
+      timeEl.textContent = timeAgo(post.time);
+
+      meta.appendChild(nameEl);
+      meta.appendChild(yearBadge);
+      meta.appendChild(timeEl);
+
+      const content = document.createElement('div');
+      content.className = 'post-content';
+      content.textContent = post.content || '';
+
+      const actionsRow = document.createElement('div');
+      actionsRow.style.display = 'flex';
+      actionsRow.style.alignItems = 'center';
+      actionsRow.style.justifyContent = 'space-between';
+      actionsRow.style.marginTop = '10px';
+
+      const left = document.createElement('div');
+      left.className = 'small';
+      left.textContent = '';
+
+      const right = document.createElement('div');
+      right.className = 'post-actions';
+
+      const likeBtn = document.createElement('button');
+      likeBtn.className = 'like';
+      if (post.liked) likeBtn.classList.add('active');
+
+      likeBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 21s-7.5-4.5-9.5-7.5C.9 9.9 4 6 7.5 6 9.4 6 11 7.1 12 8.5 13 7.1 14.6 6 16.5 6 20 6 23.1 9.9 21.5 13.5 19.5 16.5 12 21 12 21z"></path>
+        </svg>
+        <span class="count">${post.likes||0}</span>
+      `;
+
+      likeBtn.addEventListener('click', () => toggleLike(post.id));
+
+      // admin delete (visible to everyone here — remove or guard later)
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn secondary';
+      delBtn.style.marginLeft = '8px';
+      delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', () => removePost(post.id));
+
+      right.appendChild(likeBtn);
+      right.appendChild(delBtn);
+
+      actionsRow.appendChild(left);
+      actionsRow.appendChild(right);
+
+      body.appendChild(meta);
+      body.appendChild(content);
+      body.appendChild(actionsRow);
+
+      wrap.appendChild(avatar);
+      wrap.appendChild(body);
+
+      return wrap;
+    }
+
+    // ---------- POST creation ----------
+    postForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await submitCurrentPost();
+    });
+
+    postBtn.addEventListener('click', async () => {
+      await submitCurrentPost();
+    });
+
+    async function submitCurrentPost(){
+      const firstName = firstNameInput.value.trim();
+      const year = yearInput.value;
+      const content = postText.value.trim();
+      if (!firstName){
+        alert('Please enter your first name.');
+        firstNameInput.focus();
+        return;
+      }
+      if (!year){
+        alert('Please select your year.');
+        yearInput.focus();
+        return;
+      }
+      if (!content){
+        alert('Please write something to post.');
+        postText.focus();
+        return;
+      }
+      if (content.length > 280){
+        alert('Post is too long (max 280 characters).');
+        return;
+      }
+
+      postBtn.disabled = true;
+      try {
+        await addDoc(postsCol, {
+          firstName: firstName,
+          year: year,
+          content: content,
+          time: Date.now(),
+          likes: 0
+        });
+        postText.value = '';
+        updateComposerUI();
+      } catch (err){
+        console.error('Add post error', err);
+        alert('Unable to post — check console.');
+      } finally {
+        postBtn.disabled = false;
+      }
+    }
+
+    // ---------- Like logic (atomic) ----------
+    async function toggleLike(postId){
+      try {
+        const ref = doc(db, 'posts', postId);
+        await updateDoc(ref, { likes: increment(1) }); // simple increment; per-user likes not enforced yet
+      } catch (err){
+        console.error('Like failed', err);
+      }
+    }
+
+    // ---------- Remove post (admin action) ----------
+    async function removePost(postId){
+      if (!confirm('Delete this post? This action cannot be undone.')) return;
+      try {
+        await deleteDoc(doc(db, 'posts', postId));
+      } catch (err){
+        console.error('Delete error', err);
+      }
+    }
+
+    // ---------- Filter & clear ---------- 
+    filterYear.addEventListener('change', () => {
+      if (!latestSnapshot) return;
+      const posts = latestSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFeed(posts);
+    });
+
+    clearBtn.addEventListener('click', async () => {
+      if (!confirm('Clear all posts? This will delete everything in Firestore collection "posts".')) return;
+      // WARNING: deleting many docs one-by-one can be slow — for demo only
+      try {
+        const snapshot = latestSnapshot;
+        if (!snapshot) return;
+        const promises = snapshot.docs.map(d => deleteDoc(doc(db, 'posts', d.id)));
+        await Promise.all(promises);
+      } catch (err){
+        console.error('Clear all failed', err);
+      }
+    });
+
+    refreshBtn.addEventListener('click', () => {
+      if (!latestSnapshot) return;
+      const posts = latestSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFeed(posts);
+    });
+
+    // ---------- Composer UI updates ----------
+    function updateComposerUI(){
+      const v = firstNameInput.value.trim();
+      composerAvatar.textContent = v ? v.charAt(0).toUpperCase() : 'S';
+      charsLeft.textContent = 280 - postText.value.length;
+    }
+
+    firstNameInput.addEventListener('input', updateComposerUI);
+    postText.addEventListener('input', updateComposerUI);
+
+    // Ctrl/Cmd + Enter to post
+    postText.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+        postForm.dispatchEvent(new Event('submit', {cancelable:true}));
+      }
+    });
+
+    // initial UI
+    document.addEventListener('DOMContentLoaded', () => {
+      updateComposerUI();
+    });
+
+  </script>
+</body>
+</html>
